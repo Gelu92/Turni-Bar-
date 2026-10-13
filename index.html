@@ -745,8 +745,27 @@ $install.onclick=function(){
          '<h4>Se in alto vedi una X</h4><p class="note" style="margin:0">Sei in un browser dentro un\'altra app (WhatsApp, GitHub…). Tocca ⋮ e scegli “Apri in Chrome”, poi tocca di nuovo Installa.</p>'+
          '<h4>Se Chrome dice “già installata”</h4><p class="note" style="margin:0">Cerca “Turni Bar” tra le app del telefono e aprila da lì. Per reinstallarla: tieni premuta l\'icona, scegli Disinstalla, poi riapri questa pagina in Chrome.</p>'+
          '<h4>Altrimenti, a mano</h4><ol class="steps"><li>Tocca il menu ⋮ in alto a destra</li><li>Scegli “Installa app” o “Aggiungi a schermata Home”</li><li>Conferma con “Installa”</li></ol>')+
-    '<div class="actions"><span></span><button class="btn primary" type="button" id="in-ok">Ho capito</button></div>',function(s){ s.querySelector("#in-ok").onclick=closeSheet; });
+    (IN_FRAME?'':'<h4>Controllo installazione</h4><p class="note" style="margin:-4px 0 8px">Se non riesci a installarla, fai uno screenshot di questo riquadro.</p><div class="summary" id="diag"><div><span>Controllo in corso…</span><span></span></div></div>')+
+    '<div class="actions"><span></span><button class="btn primary" type="button" id="in-ok">Ho capito</button></div>',function(s){ s.querySelector("#in-ok").onclick=closeSheet; if(!IN_FRAME) runDiag(s.querySelector("#diag")); });
 };
+function runDiag(box){
+  var rows=[];
+  function row(label,ok,detail){ rows.push('<div><span>'+(ok===true?"✅ ":ok===false?"❌ ":"• ")+esc(label)+'</span><span>'+esc(detail||"")+'</span></div>'); box.innerHTML=rows.join(""); }
+  row("Indirizzo",null,location.origin+location.pathname);
+  row("Connessione sicura (https)",location.protocol==="https:");
+  row("Chrome pronto a installare",!!installEvt, installEvt?"sì":"no");
+  var link=document.querySelector('link[rel="manifest"]');
+  if(!link){ row("File manifest",false,"manca nella pagina"); return; }
+  fetch(link.href,{cache:"no-store"}).then(function(r){ if(!r.ok) throw new Error("errore "+r.status); return r.json(); }).then(function(m){
+    row("File manifest",true,m.name||"");
+    var icons=m.icons||[];
+    return Promise.all(icons.map(function(ic){ var u=new URL(ic.src,link.href).href;
+      return fetch(u,{cache:"no-store"}).then(function(r){ row("Icona "+ic.sizes+(ic.purpose?" "+ic.purpose:""),r.ok,r.ok?"ok":"non trovata ("+r.status+")"); }).catch(function(){ row("Icona "+ic.sizes,false,"non trovata"); }); }));
+  }).catch(function(e){ row("File manifest",false,"non trovato: "+e.message); }).then(function(){
+    if(!("serviceWorker" in navigator)){ row("Funzionamento offline",false,"non supportato"); return; }
+    return navigator.serviceWorker.getRegistration().then(function(reg){ row("Funzionamento offline (sw.js)",!!(reg&&reg.active), reg?(reg.active?"attivo":"in avvio"):"non registrato"); });
+  }).then(function(){ row("Aperta come app installata",isStandalone(), isStandalone()?"sì":"no, nel browser"); });
+}
 updateInstall();
 if(!IN_FRAME && "serviceWorker" in navigator && location.protocol==="https:"){
   window.addEventListener("load",function(){ navigator.serviceWorker.register("sw.js").catch(function(){}); });
