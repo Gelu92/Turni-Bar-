@@ -1,14 +1,14 @@
 // Service worker: fa funzionare l'app anche senza internet.
 // Quando modifichi l'app, cambia il numero di versione qui sotto.
-const CACHE = "turni-bar-v3";
+const CACHE = "turni-bar-v4";
 const APP = [
   "./",
   "./index.html",
   "./manifest.webmanifest",
-  "./icons/icon-192.png",
-  "./icons/icon-512.png",
-  "./icons/icon-maskable-512.png",
-  "./icons/apple-touch-icon.png"
+  "./icon-192.png",
+  "./icon-512.png",
+  "./icon-maskable-512.png",
+  "./apple-touch-icon.png"
 ];
 
 self.addEventListener("install", (e) => {

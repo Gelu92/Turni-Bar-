@@ -12,7 +12,7 @@ I dati restano salvati sul telefono (nessun server, nessun account). Usa ogni ta
 ## Pubblicare l'app su GitHub Pages
 
 1. Accedi a [github.com](https://github.com) e crea un nuovo repository (pulsante **New**), ad esempio `turni-bar`, impostato come **Public**.
-2. Nel repository tocca **Add file → Upload files** e trascina **tutti i file e la cartella `icons`** contenuti in questo zip (non lo zip stesso). Poi tocca **Commit changes**.
+2. Nel repository tocca **Add file → Upload files** e trascina **tutti i file** contenuti in questo zip (non lo zip stesso). Vanno tutti nella cartella principale del repository. Poi tocca **Commit changes**.
 3. Vai su **Settings → Pages**. In **Branch** scegli `main` e la cartella `/ (root)`, poi **Save**.
 4. Dopo un paio di minuti l'app è online all'indirizzo `https://TUO-NOME-UTENTE.github.io/turni-bar/`.
 
@@ -27,7 +27,7 @@ Una volta installata si apre a schermo intero e funziona anche senza internet.
 
 ## Aggiornare l'app
 
-Quando carichi una nuova versione di `index.html`, cambia anche il numero in `sw.js` (`turni-bar-v1` → `turni-bar-v2`), così i telefoni scaricano la versione nuova.
+Quando carichi una nuova versione di `index.html`, cambia anche il numero in `sw.js` (es. `turni-bar-v4` → `turni-bar-v5`), così i telefoni scaricano la versione nuova.
 
 ## File
 
@@ -36,5 +36,5 @@ Quando carichi una nuova versione di `index.html`, cambia anche il numero in `sw
 | `index.html` | L'app |
 | `manifest.webmanifest` | Nome, colori e icone per l'installazione |
 | `sw.js` | Funzionamento senza internet |
-| `icons/` | Icone della schermata Home (logo Surprise) |
+| `icon-*.png`, `apple-touch-icon.png` | Icone della schermata Home (logo Surprise) |
 | `logo-surprise.png` | Logo Surprise in alta risoluzione (1024×1024) |
