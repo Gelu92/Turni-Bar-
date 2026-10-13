@@ -1,6 +1,6 @@
 // Service worker: fa funzionare l'app anche senza internet.
 // Quando modifichi l'app, cambia il numero di versione qui sotto.
-const CACHE = "turni-bar-v1";
+const CACHE = "turni-bar-v2";
 const APP = [
   "./",
   "./index.html",

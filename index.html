@@ -731,14 +731,20 @@ function sharePdf(ws){
 var installEvt=null, $install=document.getElementById("install");
 function isStandalone(){ return (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) || window.navigator.standalone===true; }
 function updateInstall(){ $install.hidden=isStandalone(); }
-window.addEventListener("beforeinstallprompt",function(e){ e.preventDefault(); installEvt=e; updateInstall(); });
+var wantInstall=false;
+window.addEventListener("beforeinstallprompt",function(e){ e.preventDefault(); installEvt=e; updateInstall();
+  $install.classList.add("primary");
+  if(wantInstall){ wantInstall=false; closeSheet(); installEvt.prompt(); } });
 window.addEventListener("appinstalled",function(){ installEvt=null; updateInstall(); toast("App installata"); });
 $install.onclick=function(){
   if(installEvt){ installEvt.prompt(); installEvt.userChoice.then(function(){ installEvt=null; updateInstall(); }); return; }
-  var ios=/iphone|ipad|ipod/i.test(navigator.userAgent);
+  var ios=/iphone|ipad|ipod/i.test(navigator.userAgent); wantInstall=!ios;
   openSheet('<h3>Installa l\'app</h3><p class="sub">'+(IN_FRAME?"Questa è l'anteprima. Il pulsante installa funziona quando apri l'app dal suo indirizzo GitHub Pages.":"Aggiungila alla schermata Home: si apre come un'app, a schermo intero e anche senza internet.")+'</p>'+
     (ios?'<h4>Su iPhone (Safari)</h4><ol class="steps"><li>Tocca il pulsante Condividi in basso</li><li>Scorri e scegli “Aggiungi alla schermata Home”</li><li>Tocca “Aggiungi”</li></ol>'
-        :'<h4>Su Android (Chrome)</h4><ol class="steps"><li>Tocca il menu ⋮ in alto a destra</li><li>Scegli “Installa app” o “Aggiungi a schermata Home”</li><li>Conferma con “Installa”</li></ol>')+
+        :'<div class="info" style="margin:0 0 4px">Chrome permette l\'installazione con un tocco solo se la pagina è aperta direttamente in Chrome e l\'app non è già installata.</div>'+
+         '<h4>Se in alto vedi una X</h4><p class="note" style="margin:0">Sei in un browser dentro un\'altra app (WhatsApp, GitHub…). Tocca ⋮ e scegli “Apri in Chrome”, poi tocca di nuovo Installa.</p>'+
+         '<h4>Se Chrome dice “già installata”</h4><p class="note" style="margin:0">Cerca “Turni Bar” tra le app del telefono e aprila da lì. Per reinstallarla: tieni premuta l\'icona, scegli Disinstalla, poi riapri questa pagina in Chrome.</p>'+
+         '<h4>Altrimenti, a mano</h4><ol class="steps"><li>Tocca il menu ⋮ in alto a destra</li><li>Scegli “Installa app” o “Aggiungi a schermata Home”</li><li>Conferma con “Installa”</li></ol>')+
     '<div class="actions"><span></span><button class="btn primary" type="button" id="in-ok">Ho capito</button></div>',function(s){ s.querySelector("#in-ok").onclick=closeSheet; });
 };
 updateInstall();
